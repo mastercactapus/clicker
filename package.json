@@ -2,12 +2,21 @@
   "name": "clicker",
   "version": "0.0.1",
   "dependencies": {
-    "bootstrap": "^3.3.4",
-    "bootstrap-webpack": "0.0.3",
     "faye": "^1.1.1",
     "faye-redis": "^0.2.0",
     "koa": "^0.19.1",
-    "lodash": "^3.7.0",
-    "react": "^0.13.2"
+    "koa-static": "^1.4.9",
+    "lodash": "^3.7.0"
+  },
+  "devDependencies": {
+    "bluebird": "^2.9.25",
+    "bootstrap": "^3.3.4",
+    "bootstrap-webpack": "0.0.3",
+    "css-loader": "^0.12.0",
+    "jsx-loader": "^0.13.2",
+    "webpack": "^1.8.11",
+    "style-loader": "^0.12.1",
+    "react": "^0.13.2",
+    "uuid": "^2.0.1"
   }
 }

@@ -1,0 +1,14 @@
+.name-highlight {
+    font-weight: bold;
+    background-color: #eee;
+    padding: 2px 8px;
+    margin: 0 6px;
+}
+
+.name-btn {
+    margin: 0 4px;
+}
+
+.offline {
+    color: grey;
+}
