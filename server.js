@@ -20,11 +20,11 @@ var bayeux = new faye.NodeAdapter({
 });
 
 if (cluster.isMaster) {
-    cluster.fork();
-    cluster.fork();
-    cluster.fork();
+    // cluster.fork();
+    // cluster.fork();
+    // cluster.fork();
     clickApp.launch(bayeux);
-} else {
+// } else {
     var app = koa();
     app.use(serve(__dirname + "/public"));
 
@@ -32,8 +32,7 @@ if (cluster.isMaster) {
     bayeux.attach(server);
 
     clickNode.launch(bayeux);
-
-    server.listen(process.env.PORT || 3000, function(err){
+    server.listen(process.env.PORT||3000, process.env.IP||"0.0.0.0", 128, function(err){
         if (err) throw err;
         console.log("Listening on :%d", server.address().port);
     });

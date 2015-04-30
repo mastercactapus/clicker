@@ -20,7 +20,7 @@ function ApiClient() {
     }
 
     var self = this;
-    this._initialName = new Bluebird(function(resolve, reject){
+    this._initialName = new Bluebird(function(resolve, reject) {
         self._initialNameResolve = resolve;
     });
 
@@ -39,30 +39,40 @@ ApiClient.prototype = {
     init: function() {
         var self = this;
         this.client.subscribe("/roster", _.bind(this._updateRoster, this));
-        this.client.subscribe("/state", _.bind(this._update, this));
+        this.client.subscribe("/state", _.bind(this._update, this))
+            .then(function() {
+                self.client.publish("/request-state", {
+                    id: self.id
+                });
+            });
         this.client.subscribe("/results", _.bind(this._results, this));
-        this.client.on("transport:up", function(){
+        this.client.on("transport:up", function() {
             self.connected = true;
             self.emit("connect");
         });
-        this.client.on("transport:down", function(){
+        this.client.on("transport:down", function() {
             self.connected = false;
             self.emit("disconnect");
         });
-        this.client.publish("/request-state", {id: this.id});
     },
     click: function() {
         this.clicks++;
         this._publishClicks();
     },
     _publishClicks: _.throttle(function() {
-        this.client.publish("/client/update", {id: this.id, clicks: this.clicks});
-    }, 1000),
+        this.client.publish("/client/update", {
+            id: this.id,
+            clicks: this.clicks
+        });
+    }, 300),
     _results: function(data) {
-        self.emit("results", data);
+        this.emit("results", data);
     },
     _submitClicks: function() {
-        this.client.publish("/finalClicks", {id: this.id, clicks: this.clicks});
+        this.client.publish("/finalClicks", {
+            id: this.id,
+            clicks: this.clicks
+        });
     },
     _start: function() {
         this.clicks = 0;
@@ -77,7 +87,7 @@ ApiClient.prototype = {
     _update: function(data) {
         var self = this;
         var initName = "";
-        _.each(data.roster, function(v, i){
+        _.each(data.roster, function(v, i) {
             var id = v.id || i;
             if (!self.roster[id]) {
                 self.roster[id] = {};
@@ -120,7 +130,8 @@ ApiClient.prototype = {
             self.active = data.active;
             if (data.active) {
                 self._start();
-            } else {
+            }
+            else {
                 self.emit("end");
                 self._submitClicks();
             }
@@ -129,12 +140,16 @@ ApiClient.prototype = {
     getName: function() {
         if (this._initialNameResolve) {
             return this._initialName;
-        } else {
+        }
+        else {
             return Bluebird.resolve(this.roster[this.id].name);
         }
     },
     setName: function(newName) {
-        this.client.publish("/client/update", {id: this.id, name: newName});
+        this.client.publish("/client/update", {
+            id: this.id,
+            name: newName
+        });
     }
 };
 

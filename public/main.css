@@ -12,3 +12,7 @@
 .offline {
     color: grey;
 }
+
+#app {
+    margin-top: 8px;
+}
