@@ -9,6 +9,7 @@ var serveP = require("koa-file-server");
 var clickApp = require("./lib/clickapp");
 var clickNode = require("./lib/clicknode");
 var fayeRedis = require("faye-redis");
+var compress = require('koa-compress');
 var cluster = require("cluster");
 
 var bayeux = new faye.NodeAdapter({
@@ -30,6 +31,7 @@ if (cluster.isMaster) {
     if (process.env.NODE_ENV === "production") {
         app.use(serveP({index: true, root: __dirname + "/public"}));
     } else {
+        app.use(compress());
         app.use(serve(__dirname + "/public"));
     }
 

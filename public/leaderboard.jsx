@@ -74,6 +74,7 @@ var Leaderboard = React.createClass({
         var self = this;
 
         function rosterEntry(r) {
+            if (!r.name || !r.connected) return "";
             return (
                 <LeaderboardEntry key={r.id} id={r.id} client={self.props.client}/>
             );
