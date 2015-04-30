@@ -16,3 +16,11 @@
 #app {
     margin-top: 8px;
 }
+
+#thebutton {
+    font-family: monospace;
+}
+
+.winners .label {
+    margin-left: 8px;
+}

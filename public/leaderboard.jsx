@@ -19,6 +19,7 @@ var Leaderboard = React.createClass({
     timeUpdate: function(data){
         if (data.active && !this.timeUpdateInterval) {
             this.timeUpdateInterval = setInterval(this.calcTime, 100);
+            this.setState({clicks: 0});
         }
         if (!data.active && this.timeUpdateInterval) {
             clearInterval(this.timeUpdateInterval);
@@ -77,9 +78,10 @@ var Leaderboard = React.createClass({
                 <LeaderboardEntry key={r.id} id={r.id} client={self.props.client}/>
             );
         }
+        
         function winner(w) {
             return (
-                <span className="label label-success">{w.name}</span>
+                <span key={w.id} className="label label-success">{w.name}</span>
                 );
         }
         
@@ -87,12 +89,12 @@ var Leaderboard = React.createClass({
         
         if (this.state.active) {
             if (this.state.timeToStart > 0) {
-                action = <div className="text-muted">Starting in: {this.state.timeToStart.toFixed(1)} seconds</div>;
+                action = <div className="text-muted"><button className="btn btn-info btn-lg" disabled="disabled" id="thebutton">Get Ready</button> Starting in: {this.state.timeToStart.toFixed(1)} seconds</div>;
             } else if (this.state.timeRemaining > 0) {
-                action = <div><button onClick={this.click} id="thebutton">Click</button> <span>{this.state.timeRemaining.toFixed(1)} seconds remain</span></div>;
+                action = <div><button className="btn btn-info btn-lg" onClick={this.click} id="thebutton">--Click--</button> <span>{this.state.timeRemaining.toFixed(1)} seconds remain</span></div>;
             }
         } else if (this.state.winners) {
-            action = <h3>Winners: {this.state.winners.map(winner)}</h3>;
+            action = <h3 className="winners">Winners: {this.state.winners.map(winner)}</h3>;
         } else if (this.state.waitingForResults) {
                 action = <div>Awaiting results...</div>;
         }

@@ -67,7 +67,7 @@ var NameEntry = React.createClass({
             return;
         }
 
-        if (!/^[a-z0-9 ]+$/.test(name)) {
+        if (!/^[a-z0-9 ]+$/i.test(name)) {
             this.setState({
                 error: "name must be alpha-numeric"
             });
