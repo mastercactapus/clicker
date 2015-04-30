@@ -29,7 +29,6 @@ var LeaderboardEntry = React.createClass({
         this.props.client.on("pos:" + id, this.updatePos);
     },
     getInitialState: function () {
-        console.log(this.props);
         var client = this.props.client;
         var id = this.props.id;
         if (client.roster[id]) {
