@@ -6,7 +6,8 @@
     "faye-redis": "^0.2.0",
     "koa": "^0.19.1",
     "koa-static": "^1.4.9",
-    "lodash": "^3.7.0"
+    "lodash": "^3.7.0",
+    "koa-file-server": "^2.3.0"
   },
   "devDependencies": {
     "bluebird": "^2.9.25",

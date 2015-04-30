@@ -5,6 +5,7 @@ var koa = require("koa");
 var faye = require("faye");
 var http = require("http");
 var serve = require("koa-static");
+var serveP = require("koa-file-server");
 var clickApp = require("./lib/clickapp");
 var clickNode = require("./lib/clicknode");
 var fayeRedis = require("faye-redis");
@@ -26,7 +27,11 @@ if (cluster.isMaster) {
     clickApp.launch(bayeux);
 // } else {
     var app = koa();
-    app.use(serve(__dirname + "/public"));
+    if (process.env.NODE_ENV === "production") {
+        app.use(serveP({root: __dirname + "/public"}));
+    } else {
+        app.use(serve(__dirname + "/public"));
+    }
 
     var server = http.createServer(app.callback());
     bayeux.attach(server);
