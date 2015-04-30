@@ -31,7 +31,8 @@ function ApiClient() {
     this.clicks = 0;
     this.totalClicks = 0;
     this.totalConnected = 0;
-    this.winners = [];
+    this.winners = null;
+    this.timeOffset = 0;
     this.connected = false;
 }
 
@@ -54,8 +55,19 @@ ApiClient.prototype = {
             self.connected = false;
             self.emit("disconnect");
         });
+        
+        window._start = function(a) {
+            self.client.publish("/_start", a);
+        };
     },
     click: function() {
+        if (!this.active) return;
+        var now = new Date().getTime();
+        if (now < this.startTime || now > this.endTime) {
+            this.active = false;
+            this._timeUpdate();
+            return;
+        }
         this.clicks++;
         this._publishClicks();
     },
@@ -63,7 +75,7 @@ ApiClient.prototype = {
         this.client.publish("/client/update", {
             id: this.id,
             clicks: this.clicks
-        });
+        }, {attempts: 1});
     }, 300),
     _results: function(data) {
         this.emit("results", data);
@@ -76,11 +88,11 @@ ApiClient.prototype = {
     },
     _start: function() {
         this.clicks = 0;
-        this.emit("start", this.startTime, this.endTime);
     },
     _updateRoster: function(data) {
         this.totalClicks = data.totalClicks;
         this.totalConnected = data.totalConnected;
+        this.timeOffset = data.now - new Date().getTime();
         this.emit("roster update", data);
         this._update(data);
     },
@@ -118,24 +130,39 @@ ApiClient.prototype = {
             if (id === self.id) {
                 initName = v.name;
             }
+            
         });
 
         if (self._initialNameResolve) {
             self._initialNameResolve(initName);
             self._initialNameResolve = null;
         }
-        self.startTime = data.startTime;
-        self.endTime = data.endTime;
-        if (data.active !== self.active) {
-            self.active = data.active;
-            if (data.active) {
-                self._start();
-            }
-            else {
-                self.emit("end");
-                self._submitClicks();
-            }
+        
+        if (_.has(data, "startTime")) {
+            this.startTime = data.startTime - this.timeOffset;
         }
+        if (_.has(data, "endTime")) {
+            this.endTime = data.endTime - this.timeOffset;
+        }
+        if (_.has(data, "active")) {
+            if (data.active !== self.active) {
+                if (data.active) {
+                    this.clicks = 0;
+                } else {
+                    self._submitClicks();
+                }
+            }
+            this.active = data.active;
+        }
+        if (_.has(data, "winners")) {
+            this.winners = data.winners;
+            this.emit("winners", data.winners);
+        }
+        
+        this._timeUpdate();
+    },
+    _timeUpdate: function() {
+        this.emit("time update", {start: this.startTime, end: this.endTime, active: this.active});
     },
     getName: function() {
         if (this._initialNameResolve) {
