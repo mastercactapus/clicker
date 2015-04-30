@@ -28,7 +28,7 @@ if (cluster.isMaster) {
 // } else {
     var app = koa();
     if (process.env.NODE_ENV === "production") {
-        app.use(serveP({root: __dirname + "/public"}));
+        app.use(serveP({index: true, root: __dirname + "/public"}));
     } else {
         app.use(serve(__dirname + "/public"));
     }
