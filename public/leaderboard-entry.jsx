@@ -17,14 +17,14 @@ var LeaderboardEntry = React.createClass({
     componentWillUnmount: function () {
         var id = this.props.id;
         this.props.client.removeListener("name:" + id, this.updateName);
-        this.props.client.removeListener("connect:" + id, this.updateConnected);
+        this.props.client.removeListener("connected:" + id, this.updateConnected);
         this.props.client.removeListener("clicks:" + id, this.updateClicks);
         this.props.client.removeListener("pos:" + id, this.updatePos);
     },
     componentDidMount: function () {
         var id = this.props.id;
         this.props.client.on("name:" + id, this.updateName);
-        this.props.client.on("connect:" + id, this.updateConnected);
+        this.props.client.on("connected:" + id, this.updateConnected);
         this.props.client.on("clicks:" + id, this.updateClicks);
         this.props.client.on("pos:" + id, this.updatePos);
     },
