@@ -45,7 +45,7 @@ var LeaderboardEntry = React.createClass({
     render: function(){
         return (
             <tr className={this.state.connected ? "" : "offline"}>
-                <th>{this.state.pos}</th>
+                <th>{this.props.pos}</th>
                 <th>{this.state.name}</th>
                 <td>{this.state.clicks}</td>
             </tr>

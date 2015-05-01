@@ -10,7 +10,7 @@
 }
 
 .offline {
-    color: grey;
+    display: none;
 }
 
 #app {

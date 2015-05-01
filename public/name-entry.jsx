@@ -6,13 +6,23 @@ var NameEntry = React.createClass({
         var client = this.props.client;
         var self = this;
         client.on("connect", function () {
-            self.setState({connected: true});
+            client.getName()
+            .then(function(name) {
+                self.setState({
+                    name:name,
+                    connected: true,
+                    gotName: true,
+                });
+            });
         });
         client.on("disconnect", function () {
-            self.setState({connected: false});
+            self.setState({connected: false, gotName: false});
         });
         client.on("name:" + client.id, function (newName) {
             self.setState({name: newName});
+        });
+        client.on("name-error", function(data){
+            self.setState(data);
         });
         client.getName()
             .then(function (name) {
@@ -20,6 +30,9 @@ var NameEntry = React.createClass({
                     name: name,
                     gotName: true,
                 });
+                if (name) {
+                    client.setName(name);
+                }
             });
         return {
             error: "",
@@ -47,6 +60,7 @@ var NameEntry = React.createClass({
         this.setState({
             edit: false,
             enteredName: this.state.name,
+            error: "",
         });
         e.preventDefault();
     },
@@ -90,7 +104,7 @@ var NameEntry = React.createClass({
             );
         }
 
-        if (!this.state.edit && this.state.name) {
+        if (!this.state.edit && this.state.name && !this.state.error) {
             return (
                 <div>
                     <h3>Known as: <span className="name-highlight">{this.state.name}</span>
