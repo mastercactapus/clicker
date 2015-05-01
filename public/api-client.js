@@ -11,7 +11,7 @@ var Bluebird = require("bluebird");
 // start: {timeStart, timeEnd}
 // stop: {}
 function ApiClient() {
-    this.client = new faye.Client("/ws");
+    this.client = new faye.Client(this._connectUrl);
     try {
         this.id = sessionStorage.getItem("clickapp-uuid");
         if (!this.id) {
@@ -40,6 +40,7 @@ function ApiClient() {
 }
 
 ApiClient.prototype = {
+    _connectUrl: "/ws",
     init: function() {
         var self = this;
         var subscriptions = [
@@ -62,11 +63,12 @@ ApiClient.prototype = {
             self.connected = false;
             self.emit("disconnect");
         });
-
-        window._start = function(a) {
-            self.client.publish("/_start", a);
-        };
-        return Bluebird.all(subscriptions);
+        if (typeof window !== "undefined") {
+            window._start = function(a) {
+                self.client.publish("/_start", a);
+            };
+        }
+        return Bluebird.all(subscriptions).return(this);
     },
     click: function() {
         if (!this.active) return;
